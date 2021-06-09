@@ -1,0 +1,20 @@
+<div class="main-page">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col col-xl-4 col-lg-6 col-md-6 col-sm-12" #calendar>
+        <mat-calendar
+          class="mat-calendar calendar"
+          [dateClass]="dateClass"
+          [(selected)]="selectedDate"
+          (selectedChange)="updateEvents()"
+        ></mat-calendar>
+        <button class="btn btn-primary" [disabled]="!selectedDate" (click)="navigate()">Добавить событие</button>
+      </div>
+      <div class="col col-xl-6 col-lg-5 col-md-12 col-sm-12">
+        <div class="card-column">
+          <app-event-card *ngFor="let event of events" [event]="event"></app-event-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

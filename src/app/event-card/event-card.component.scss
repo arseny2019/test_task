@@ -1,0 +1,39 @@
+.event-card {
+  border: 1px solid #e5e5e5;
+  padding: 40px 40px 10px;
+  font-size: 18px;
+  line-height: 22px;
+  position: relative;
+
+
+  &__buttons {
+    display: none;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    align-items: center;
+    column-gap: 12px;
+    transition: 200ms;
+    opacity: 0;
+  }
+
+  &:hover {
+    .event-card__buttons {
+      display: flex;
+      opacity: 1;
+    }
+  }
+
+  &__icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    object-position: center;
+    cursor: pointer;
+  }
+
+  &__delete {
+    width: 24px;
+    height: 24px;
+  }
+}

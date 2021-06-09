@@ -1,0 +1,13 @@
+<div class="event-card" *ngIf="event">
+  <div class="event-card__buttons">
+    <img [src]="'../assets/img/edit.png'" (click)="editEvent()" class="event-card__icon event-card__edit" alt="Редактировать">
+    <img [src]="'../assets/img/delete.png'" (click)="deleteEvent()" class="event-card__icon event-card__delete" alt="Удалить">
+  </div>
+  <p>{{event.title}}</p>
+  <ng-container [ngSwitch]="event.type">
+    <p *ngSwitchCase="'meeting'"><strong>Адрес: </strong><span>{{event.data}}</span></p>
+    <p *ngSwitchCase="'meeting'"><strong>Время: </strong><span>{{event.additionData}}</span></p>
+    <p *ngSwitchCase="'note'">{{event.data}}</p>
+    <p *ngSwitchCase="'celebration'"><strong>Бюджет: </strong><span>{{event.data}}</span></p>
+  </ng-container>
+</div>

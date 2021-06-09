@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="row">
+    <div class="col col-xl-4 col-lg-6 col-md-6 col-sm-12">
+      <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()">
+        <h2 *ngIf="editedEvent">Редактировать событие</h2>
+        <h2 *ngIf="!editedEvent">Добавить событие</h2>
+        <mat-form-field appearance="fill">
+          <mat-label>Название события</mat-label>
+          <input matInput formControlName="title">
+          <mat-error *ngIf="form.get('title')?.invalid && form.get('title')?.errors?.required">Поле обязательно</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Тип события</mat-label>
+          <mat-select [(ngModel)]="defaultType" formControlName="type" (valueChange)="typeChange($event)">
+            <mat-option value="meeting">Мероприятие</mat-option>
+            <mat-option value="note">Заметка</mat-option>
+            <mat-option value="celebration">Праздник</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <ng-container [ngSwitch]="currentType">
+          <mat-form-field *ngSwitchCase="'note'" appearance="fill">
+            <mat-label>Заметка</mat-label>
+            <textarea matInput formControlName="note"></textarea>
+            <mat-error *ngIf="form.get('note')?.invalid && form.get('note')?.errors?.required">Поле обязательно</mat-error>
+            <mat-error *ngIf="form.get('note')?.invalid && form.get('note')?.errors?.minlength">Поле должно содержать не менее 4 символов</mat-error>
+          </mat-form-field>
+          <mat-form-field *ngSwitchCase="'celebration'" appearance="fill">
+            <mat-label>Бюджет</mat-label>
+            <input matInput formControlName="budget">
+            <mat-error *ngIf="form.get('budget')?.invalid && form.get('budget')?.errors?.required">Поле обязательно</mat-error>
+          </mat-form-field>
+          <ng-container *ngSwitchCase="'meeting'">
+            <mat-form-field appearance="fill">
+              <mat-label>Адрес</mat-label>
+              <input matInput formControlName="address">
+              <mat-error *ngIf="form.get('address')?.invalid && form.get('address')?.errors?.required">Поле обязательно</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Время</mat-label>
+              <input matInput formControlName="time">
+              <mat-error *ngIf="form.get('time')?.invalid && form.get('time')?.errors?.required">Поле обязательно</mat-error>
+            </mat-form-field>
+          </ng-container>
+        </ng-container>
+        <div class="buttons">
+          <button [routerLink]="['/']" class="btn btn-primary">Назад</button>
+          <button type="submit" [disabled]="form.invalid" class="btn btn-primary">
+            <span *ngIf="editedEvent">Редактировать событие</span>
+            <span *ngIf="!editedEvent">Добавить событие</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

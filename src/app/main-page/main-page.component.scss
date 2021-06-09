@@ -1,0 +1,14 @@
+.main-page {
+  margin-top: 200px;
+}
+
+.calendar {
+  width: 100%;
+  min-width: 400px;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 20px;
+}
+
+::ng-deep .busy-day {
+  background-color: rgba(255, 182, 190, 0.51);
+}
