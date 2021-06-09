@@ -16,7 +16,7 @@ export class EditPageComponent implements OnInit {
   currentType: string = this.defaultType;
   eventDate: string = '';
   id: string = '';
-  editedEvent: Event | boolean = false;
+  editedEvent?: Event;
 
   constructor(
     private route: ActivatedRoute,
@@ -30,7 +30,7 @@ export class EditPageComponent implements OnInit {
         this.id = queryParams.id;
         if (this.id) {
           this.editedEvent = this.postService.getEventByID(this.id);
-          if (this.editedEvent) this.defaultType = this.currentType = (this.editedEvent as Event).type;
+          if (this.editedEvent) this.defaultType = this.currentType = this.editedEvent.type;
         }
       }
     );
@@ -38,19 +38,19 @@ export class EditPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      title: new FormControl(this.editedEvent ? (this.editedEvent as Event).title : '', [ Validators.required ]),
+      title: new FormControl(this.editedEvent?.title ?? '', [ Validators.required ]),
       type: new FormControl(this.defaultType),
-      note: new FormControl(this.editedEvent ? (this.editedEvent as Event).data : '', [ Validators.required, Validators.minLength(4) ]),
-      budget: new FormControl(this.editedEvent ? (this.editedEvent as Event).data : '', [ Validators.required ]),
-      address: new FormControl(this.editedEvent ? (this.editedEvent as Event).additionData : '', [ Validators.required, Validators.minLength(4) ]),
-      time: new FormControl(this.editedEvent ? (this.editedEvent as Event).data : '8:00', [ Validators.required ])
+      note: new FormControl(this.editedEvent?.data ?? '', [ Validators.required, Validators.minLength(4) ]),
+      budget: new FormControl(this.editedEvent?.data ?? '', [ Validators.required ]),
+      address: new FormControl(this.editedEvent?.additionData ?? '', [ Validators.required, Validators.minLength(4) ]),
+      time: new FormControl(this.editedEvent?.data ?? '8:00', [ Validators.required ])
     });
     this.typeChange(this.currentType);
   }
 
   submit() {
     if (this.editedEvent) {
-      this.postService.updateEvent(this.getNewEvent(), this.editedEvent as Event)
+      this.postService.updateEvent(this.getNewEvent(), this.editedEvent)
     } else {
       this.postService.addNewEvent(this.getNewEvent());
     }
@@ -58,12 +58,16 @@ export class EditPageComponent implements OnInit {
 
   typeChange(e: string) {
     this.currentType = e;
-    if (e === EventTypes.Meeting) {
-      this.enableMeetingFields();
-    } else if (e === EventTypes.Celebration) {
-      this.enableCelebrationFields();
-    } else if (e === EventTypes.Note) {
-      this.enableNoteFields();
+    switch (e) {
+      case EventTypes.Meeting:
+        this.enableMeetingFields();
+        break;
+      case EventTypes.Celebration:
+        this.enableCelebrationFields();
+        break;
+      case EventTypes.Note:
+        this.enableNoteFields();
+        break;
     }
   }
 
@@ -97,34 +101,31 @@ export class EditPageComponent implements OnInit {
   }
 
   private getNewEvent(): Event {
-    let event: Event;
-    if (this.currentType === EventTypes.Meeting) {
-      event = {
-        id: new Date().getTime(),
-        date: this.eventDate,
-        title: this.form?.get('title')?.value,
-        type: EventTypes.Meeting,
-        data: this.form?.get('time')?.value,
-        additionData: this.form?.get('address')?.value
-      }
-    } else if (this.currentType === EventTypes.Celebration) {
-      event = {
-        id: new Date().getTime(),
-        date: this.eventDate,
-        title: this.form?.get('title')?.value,
-        type: EventTypes.Celebration,
-        data: this.form?.get('budget')?.value
-      }
-    } else {
-      event = {
-        id: new Date().getTime(),
-        date: this.eventDate,
-        title: this.form?.get('title')?.value,
-        type: EventTypes.Note,
-        data: this.form?.get('note')?.value
-      }
+    let event: Partial<Event> = {
+      id: new Date().getTime().toString(),
+      date: this.eventDate,
+      title: this.form?.get('title')?.value,
+    };
+    switch (this.currentType) {
+      case EventTypes.Meeting:
+        return {
+          ...event,
+          type: EventTypes.Meeting,
+          data: this.form?.get('time')?.value,
+          additionData: this.form?.get('address')?.value
+        } as Event;
+      case EventTypes.Celebration:
+        return {
+          ...event,
+          type: EventTypes.Celebration,
+          data: this.form?.get('budget')?.value
+        } as Event;
+      default:
+        return {
+          ...event,
+          type: EventTypes.Note,
+          data: this.form?.get('note')?.value
+        } as Event;
     }
-
-    return event;
   }
 }
